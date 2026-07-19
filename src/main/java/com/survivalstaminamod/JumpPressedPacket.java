@@ -11,7 +11,6 @@ public class JumpPressedPacket {
     public JumpPressedPacket() {}
 
     public static void encode(JumpPressedPacket msg, FriendlyByteBuf buf) {
-        // データなし
     }
 
     public static JumpPressedPacket decode(FriendlyByteBuf buf) {
@@ -22,7 +21,6 @@ public class JumpPressedPacket {
         ctx.get().enqueueWork(() -> {
             ServerPlayer player = ctx.get().getSender();
             if (player != null) {
-                // サーバーでスタミナ減らす
                 StaminaSystem.onJumpKeyPressed(player);
             }
         });

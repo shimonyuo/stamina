@@ -37,7 +37,6 @@ public abstract class StaminaSpeedDebuff {
             return travelVector.multiply(WATER_MULTIPLIER, WATER_MULTIPLIER, WATER_MULTIPLIER);
         }
 
-        // スタミナによる基本倍率
         float stamina = StaminaSystem.getStamina(player);
         float multiplier = player.isSprinting()
                 ? (stamina < 10.0f ? RED_MULTIPLIER : stamina < 60.0f ? YELLOW_MULTIPLIER : NORMAL_MULTIPLIER)
@@ -49,7 +48,6 @@ public abstract class StaminaSpeedDebuff {
             multiplier *= SNEAK_CRAWL_MULTIPLIER;
         }
 
-        // 斜め移動対策 + 入力減衰
         Vec3 normalized = travelVector.normalize();
         return new Vec3(
                 normalized.x * multiplier,

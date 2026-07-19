@@ -13,25 +13,15 @@ public class CrawlingOverlayRenderer implements IGuiOverlay {
     private static final ResourceLocation CRAWLING_TEXTURE =
             new ResourceLocation("survivalstaminamod", "textures/gui/gui.png");
 
-    // ─────────────────────────────
-    // 調整項目（ここを変更してください）
-    // ─────────────────────────────
-    private static final float BASE_SCALE_FACTOR = 0.115f;     // 基準解像度（縦1017）でのスケール
-    private static final float BASE_OFFSET_Y = 290f;           // 基準解像度（縦1017）でのオフセット
+    private static final float BASE_SCALE_FACTOR = 0.115f;
+    private static final float BASE_OFFSET_Y = 290f;
     private static final float BASE_OFFSET_X = 98f;
     private static final int ORIGINAL_WIDTH = 512;
     private static final int ORIGINAL_HEIGHT = 512;
     private static final int CROP_SIZE = 256;
     private static final float FADE_TIME = 0.5f;
-
-    // クロールアイコンを下にずらす量（基準解像度でのピクセル単位）
-    // サバイバル/アドベンチャーモードの時だけ加算
     private static final float BASE_CROWD_ICON_Y_OFFSET = 60f;
-
-    // 基準となる画面縦サイズ（これを元に比例計算）
     private static final float BASE_SCREEN_HEIGHT = 1017f;
-    // ─────────────────────────────
-
     private static float fadeTimer = 0.0f;
     private static boolean wasCrawling = false;
     private static boolean isInitialized = false;
@@ -41,46 +31,37 @@ public class CrawlingOverlayRenderer implements IGuiOverlay {
         Minecraft mc = Minecraft.getInstance();
         if (mc.player == null || mc.options.hideGui) return;
 
-        // ワールド入場直後の初期化（1回だけ実行）
         if (mc.player.tickCount < 5 || !isInitialized) {
             fadeTimer = 0.0f;
-            // 新しいVキー匍匐システムの状態を取得
             boolean isCrawlingNow = TestCrawlHandler.isVKeyPressed();
             wasCrawling = isCrawlingNow;
             isInitialized = true;
 
-            // 匍匐中でなければ何も表示しない
             if (!isCrawlingNow) {
                 return;
             }
         }
 
-        // 現在のVキー匍匐状態を取得
         boolean isCrawling = TestCrawlHandler.isVKeyPressed();
         float deltaTime = mc.getDeltaFrameTime() / 20.0f;
 
         if (isCrawling) {
-            // 匍匐中 → 完全に不透明、フェードタイマーリセット
             fadeTimer = 0.0f;
             wasCrawling = true;
         } else if (wasCrawling) {
-            // 匍匐終了 → フェードアウト開始
             fadeTimer += deltaTime;
         }
 
-        // フェードアウト完了したら状態をリセット
         if (!isCrawling && fadeTimer >= FADE_TIME) {
             wasCrawling = false;
             fadeTimer = 0.0f;
             return;
         }
 
-        // 匍匐中でもなく、フェード中でもない場合は何も表示しない
         if (!isCrawling && !wasCrawling) {
             return;
         }
 
-        // アルファ値計算（フェードアウトのみ）
         float alpha = 1.0f;
         if (!isCrawling && wasCrawling) {
             float fadeProgress = fadeTimer / FADE_TIME;
@@ -96,16 +77,13 @@ public class CrawlingOverlayRenderer implements IGuiOverlay {
         float physW = screenWidth * (float)scale;
         float physH = screenHeight * (float)scale;
 
-        // 解像度比例の倍率
         float resolutionScale = physH / BASE_SCREEN_HEIGHT;
 
-        // 比例調整された値
         float adjustedOffsetX = BASE_OFFSET_X * resolutionScale;
         float adjustedOffsetY = BASE_OFFSET_Y * resolutionScale;
         float adjustedScaleFactor = BASE_SCALE_FACTOR * resolutionScale;
         float adjustedCrowdOffset = 0f;
 
-        // サバイバル/アドベンチャーモードの時だけ追加オフセット
         GameType gameMode = mc.gameMode.getPlayerMode();
         if (gameMode == GameType.SURVIVAL || gameMode == GameType.ADVENTURE) {
             adjustedCrowdOffset = BASE_CROWD_ICON_Y_OFFSET * resolutionScale;

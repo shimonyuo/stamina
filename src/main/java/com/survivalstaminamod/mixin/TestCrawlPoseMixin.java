@@ -18,7 +18,6 @@ public abstract class TestCrawlPoseMixin {
     private void injectTestCrawlCondition(CallbackInfo ci) {
         Player player = (Player)(Object)this;
 
-        // キーが押されている間は強制的にSWIMMING姿勢にする
         if (TestCrawlHandler.isVKeyPressed()) {
             player.setPose(net.minecraft.world.entity.Pose.SWIMMING);
             ci.cancel();

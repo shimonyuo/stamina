@@ -12,13 +12,12 @@ public class KeyBindingRegistry {
 
     public static final KeyMapping TEST_CRAWL_KEY = new KeyMapping(
             "key.survivalstaminamod.testcrawl",
-            GLFW.GLFW_KEY_C,                    // Vキー
+            GLFW.GLFW_KEY_C,
             "key.categories.survivalstaminamod"
     );
 
-    // キーバインドを登録するメソッド
     @SubscribeEvent
     public static void onRegisterKeyMappings(RegisterKeyMappingsEvent event) {
-        event.register(TEST_CRAWL_KEY);     // ← ここに追加！
+        event.register(TEST_CRAWL_KEY);
     }
 }

@@ -26,12 +26,11 @@ public abstract class TestCrawlPlayerModelMixin {
             CallbackInfo ci) {
 
         if (entity instanceof Player player) {
-            // SWIMMING姿勢（mod匍匐含む）のときだけスニークモデル変形をキャンセル
             if (player.getPose() == Pose.SWIMMING ||
                     (player.getForcedPose() != null && player.getForcedPose() == Pose.SWIMMING)) {
 
                 PlayerModel<?> model = (PlayerModel<?>) (Object) this;
-                model.crouching = false;   // これで身体の腰曲げ（crouch animation）がスキップされる
+                model.crouching = false;
             }
         }
     }

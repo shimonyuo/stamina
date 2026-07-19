@@ -16,6 +16,4 @@ public class InputDirectionStorage {
     public static Vec3 getDirection(UUID uuid) {
         return clientInputDirections.getOrDefault(uuid, Vec3.ZERO);
     }
-
-    // 必要に応じてクリア（例: ログアウト時）だがテストでは不要
 }

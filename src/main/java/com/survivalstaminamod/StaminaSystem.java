@@ -61,11 +61,9 @@ public class StaminaSystem {
                 : GameType.SURVIVAL;
         boolean allowDecrease = (gameMode == GameType.SURVIVAL || gameMode == GameType.ADVENTURE);
         boolean allowRecovery = true;
-        // ダッシュ減少
         if (allowDecrease && player.isSprinting()) {
             current -= DASH_COST_PER_SECOND / 20f;
         }
-        // 回復処理
         if (allowRecovery) {
             if (allowDecrease) {
                 if (!player.isSprinting() && !player.onClimbable() && !player.isInWater()) {
@@ -95,7 +93,6 @@ public class StaminaSystem {
                 ? sp.gameMode.getGameModeForPlayer()
                 : GameType.SURVIVAL;
 
-        // クリエイティブやスペクテイターではジャンプ消費しない
         if (gameMode != GameType.SURVIVAL && gameMode != GameType.ADVENTURE) {
             return;
         }
@@ -106,7 +103,6 @@ public class StaminaSystem {
         current = clamp(current, 0f, MAX_STAMINA);
         staminaMap.put(uuid, current);
 
-        // クライアントにスタミナ更新を通知
         if (player instanceof ServerPlayer serverPlayer) {
             NetworkHandler.CHANNEL.sendTo(
                     new StaminaUpdatePacket(uuid, current),

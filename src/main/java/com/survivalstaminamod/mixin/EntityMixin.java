@@ -31,41 +31,34 @@ public abstract class EntityMixin {
     @Shadow public abstract Vec3 getDeltaMovement();
     @Shadow public abstract void setDeltaMovement(Vec3 vec);
 
-    // 毎フレーム、重なっているブロックの反対方向に水平押し出し
     @Inject(method = "move", at = @At("HEAD"))
     private void pushOutFromOverlappingBlocks(MoverType type, Vec3 movement, CallbackInfo ci) {
         if (this.isRemoved()) {
             return;
         }
 
-        // プレイヤー以外は何もしない
         if (!((Entity)(Object)this instanceof Player player)) {
             return;
         }
 
         GameType gameMode;
         if (player instanceof ServerPlayer serverPlayer) {
-            // Forge/NeoForge では interactionManager が存在しない場合があるので
-            // gameMode を直接取得（1.20.1+ の安定した方法）
             gameMode = serverPlayer.gameMode.getGameModeForPlayer();
         } else {
-            // クライアント側フォールバック
             gameMode = Minecraft.getInstance().gameMode.getPlayerMode();
         }
 
         if (gameMode != GameType.SURVIVAL && gameMode != GameType.CREATIVE && gameMode != GameType.ADVENTURE) {
-            return;  // SPECTATOR などでは押し出し無効
+            return;
         }
 
         AABB collisionBox = this.getBoundingBox();
         Vec3 playerCenter = collisionBox.getCenter();
 
-        // 完全に空いている → 何も押し出さない
         if (level().noCollision((Entity)(Object)this, collisionBox)) {
             return;
         }
 
-        // 重なっているブロックの中心位置リストを取得
         List<Vec3> blockCenters = new ArrayList<>();
 
         BlockPos minPos = BlockPos.containing(collisionBox.minX, collisionBox.minY, collisionBox.minZ);
@@ -94,27 +87,23 @@ public abstract class EntityMixin {
 
         if (!blockCenters.isEmpty()) {
             Vec3 totalPush = Vec3.ZERO;
-            double pushStrength = 0.2;  // 1フレームあたりの押し出し量（調整可能）
+            double pushStrength = 0.2;
 
             for (Vec3 blockCenter : blockCenters) {
                 Vec3 toBlock = blockCenter.subtract(playerCenter);
                 double dx = toBlock.x;
                 double dz = toBlock.z;
 
-                // atan2で角度計算（-180～180）
                 double angle = Math.atan2(dz, dx) * (180.0 / Math.PI);
 
-                // 90度単位に丸める（4方向に統一）
                 double normalized = Math.round(angle / 90.0) * 90.0;
 
-                // -180 ～ 180 の範囲に正規化
                 if (normalized > 180.0) {
                     normalized -= 360.0;
                 } else if (normalized < -180.0) {
                     normalized += 360.0;
                 }
 
-                // 符号で反転（正反対の方向を計算）
                 double oppositeAngle;
                 if (normalized >= 0) {
                     oppositeAngle = normalized - 180.0;  // 正の値 → -180加算
@@ -122,16 +111,13 @@ public abstract class EntityMixin {
                     oppositeAngle = normalized + 180.0;  // 負の値 → +180加算
                 }
 
-                // ラジアンに変換して押し出し計算
                 double rad = Math.toRadians(oppositeAngle);
                 double pushX = Math.cos(rad) * pushStrength;
                 double pushZ = Math.sin(rad) * pushStrength;
 
-                // 各ブロックごとに押し出しを加算
                 totalPush = totalPush.add(pushX, 0.0, pushZ);
             }
 
-            // 現在の移動に総押し出しを追加
             Vec3 currentMotion = this.getDeltaMovement();
             this.setDeltaMovement(currentMotion.add(totalPush));
         }

@@ -1,6 +1,5 @@
 package com.survivalstaminamod;
 
-// ForgeのClientTickEventを使う
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.phys.Vec3;
@@ -26,10 +25,6 @@ public class ClientInputHandler {
         double forward = player.input.forwardImpulse;
         double strafe = player.input.leftImpulse;
 
-        // 注意: MinecraftのforwardImpulseは負の値が「前」方向（Z軸負）
-        Vec3 inputDir = new Vec3(strafe, 0.0, forward);
-
-        // プレイヤーの向き（yaw）に合わせて世界座標に変換
         float yawRad = (float) Math.toRadians(player.getYRot());
         double x = strafe * Math.cos(yawRad) - forward * Math.sin(yawRad);
         double z = strafe * Math.sin(yawRad) + forward * Math.cos(yawRad);
@@ -42,7 +37,6 @@ public class ClientInputHandler {
             worldDir = Vec3.ZERO;
         }
 
-        // 前回と違う場合だけ送信（負荷軽減）
         if (!worldDir.equals(lastSentDirection)) {
             NetworkHandler.CHANNEL.sendToServer(new InputDirectionPacket(worldDir));
             lastSentDirection = worldDir;

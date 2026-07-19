@@ -12,19 +12,13 @@ public class HealingOverlayRenderer implements IGuiOverlay {
     private static final ResourceLocation HEALING_TEXTURE =
             new ResourceLocation("survivalstaminamod", "textures/gui/healing.png");
 
-    // ─────────────────────────────
-    // 調整項目（ここを変更してください）
-    // ─────────────────────────────
-    private static final float BASE_SCALE_FACTOR = 0.18f;      // 基準解像度（縦1017）でのスケール
-    private static final float BASE_OFFSET_Y = 155f;           // 基準解像度（縦1017）でのオフセット
+    private static final float BASE_SCALE_FACTOR = 0.18f;
+    private static final float BASE_OFFSET_Y = 155f;
     private static final int ORIGINAL_WIDTH = 512;
     private static final int ORIGINAL_HEIGHT = 512;
     private static final float REMAIN_TIME = 3.0f;
     private static final float FADE_TIME = 2.0f;
-
-    // 基準となる画面縦サイズ（これを元に比例計算）
     private static final float BASE_SCREEN_HEIGHT = 1017f;
-    // ─────────────────────────────
 
     @Override
     public void render(ForgeGui gui, GuiGraphics guiGraphics, float partialTick, int screenWidth, int screenHeight) {
@@ -33,23 +27,19 @@ public class HealingOverlayRenderer implements IGuiOverlay {
 
         int currentTick = mc.player.tickCount;
 
-        // タイマー更新と初期化チェック
         HealingEventHandler.tick(partialTick, currentTick);
 
-        // 表示フラグチェック
         if (!HealingEventHandler.shouldDisplay()) {
             return;
         }
 
         float timer = HealingEventHandler.getDisplayTimer();
 
-        // フェード完了で非表示
         if (timer >= REMAIN_TIME + FADE_TIME) {
             HealingEventHandler.stopDisplay();
             return;
         }
 
-        // アルファ値計算
         float alpha = 1.0f;
         if (timer > REMAIN_TIME) {
             float fadeProgress = (timer - REMAIN_TIME) / FADE_TIME;
@@ -58,17 +48,12 @@ public class HealingOverlayRenderer implements IGuiOverlay {
 
         if (alpha <= 0.0f) return;
 
-        // 描画処理
         double scale = mc.getWindow().getGuiScale();
         guiGraphics.pose().pushPose();
         guiGraphics.pose().scale(1f / (float)scale, 1f / (float)scale, 1f);
         float physW = screenWidth * (float)scale;
         float physH = screenHeight * (float)scale;
-
-        // 解像度比例の倍率（縦1017pxを基準）
         float resolutionScale = physH / BASE_SCREEN_HEIGHT;
-
-        // スケールとオフセットを比例調整
         float adjustedScaleFactor = BASE_SCALE_FACTOR * resolutionScale;
         float adjustedOffsetY = BASE_OFFSET_Y * resolutionScale;
 

@@ -8,7 +8,7 @@ import net.minecraftforge.network.NetworkEvent;
 import java.util.function.Supplier;
 
 public class InputDirectionPacket {
-    private final Vec3 direction;  // 正規化されたXZ方向（長さ1 or ゼロ）
+    private final Vec3 direction;
 
     public InputDirectionPacket(Vec3 direction) {
         this.direction = direction;

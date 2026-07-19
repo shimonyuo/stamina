@@ -6,7 +6,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fml.loading.FMLEnvironment;   // ★★★ 追加
+import net.minecraftforge.fml.loading.FMLEnvironment;
 
 @Mod(SurvivalStaminaMod.MOD_ID)
 public class SurvivalStaminaMod {
@@ -15,7 +15,6 @@ public class SurvivalStaminaMod {
 
     public SurvivalStaminaMod() {
 
-        // ====================== クライアント専用のみ登録 ======================
         if (FMLEnvironment.dist.isClient()) {
             MinecraftForge.EVENT_BUS.register(new HudHandler());
             MinecraftForge.EVENT_BUS.register(new StaminaHudRenderer());
@@ -25,13 +24,12 @@ public class SurvivalStaminaMod {
             MinecraftForge.EVENT_BUS.register(new OxygenVignetteOverlay());
         }
 
-        // ====================== サーバー・クライアント共通 ======================}
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, StaminaConfig.SPEC, "survivalstaminamod.toml");
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::commonSetup);
     }
 
     private void commonSetup(FMLCommonSetupEvent event) {
-        NetworkHandler.register();   // パケット登録
+        NetworkHandler.register();
         MinecraftForge.EVENT_BUS.register(StaminaConfig.class);
     }
 }

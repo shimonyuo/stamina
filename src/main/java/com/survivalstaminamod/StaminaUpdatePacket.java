@@ -28,7 +28,6 @@ public class StaminaUpdatePacket {
 
     public static void handle(StaminaUpdatePacket msg, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
-            // ★★★ クライアント側のスタミナマップを更新 ★★★
             StaminaSystem.staminaMap.put(msg.playerUUID, msg.staminaValue);
         });
         ctx.get().setPacketHandled(true);

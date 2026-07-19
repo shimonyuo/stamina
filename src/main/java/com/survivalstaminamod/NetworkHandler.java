@@ -7,7 +7,6 @@ import net.minecraftforge.network.simple.SimpleChannel;
 public class NetworkHandler {
     private static final String PROTOCOL_VERSION = "1";
 
-    // パケット送信用のチャンネル
     public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
             new ResourceLocation("survivalstaminamod", "main"),
             () -> PROTOCOL_VERSION,
@@ -17,7 +16,6 @@ public class NetworkHandler {
 
     private static int packetId = 0;
 
-    // パケットを登録（Mod起動時に1回だけ呼ぶ）
     public static void register() {
         CHANNEL.registerMessage(
                 packetId++,

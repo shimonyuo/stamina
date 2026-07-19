@@ -15,15 +15,10 @@ public class Overlay {
     private static final ResourceLocation VIGNETTE =
             new ResourceLocation("survivalstaminamod", "textures/gui/vignette.png");
 
-    // ─────────────────────────────
-    // 調整項目（ここだけ触ってください）
-    // ─────────────────────────────
-    private static final float MAX_INTENSITY   = 0.9f;   // 体力0時の最大透明度（0.0～1.0）
-    private static final float PULSE_STRENGTH  = 0.1f;   // 脈動の強さ
-    private static final float PULSE_SPEED     = 0.05f;  // 心拍の速さ
-    // ─────────────────────────────
+    private static final float MAX_INTENSITY   = 0.9f;
+    private static final float PULSE_STRENGTH  = 0.1f;
+    private static final float PULSE_SPEED     = 0.05f;
 
-    // 心拍タイマー
     private float heartbeatTimer = 0.0f;
 
     public Overlay() {
@@ -31,7 +26,7 @@ public class Overlay {
     }
 
     @SubscribeEvent
-    public void onRenderOverlay(RenderGuiOverlayEvent.Post event) {  // ← Pre を Post に変更
+    public void onRenderOverlay(RenderGuiOverlayEvent.Post event) {
         if (!event.getOverlay().id().equals(VanillaGuiOverlay.VIGNETTE.id())) return;
 
         Minecraft mc = Minecraft.getInstance();
@@ -47,7 +42,6 @@ public class Overlay {
             return;
         }
 
-        // 心拍アニメーション
         heartbeatTimer += mc.getDeltaFrameTime() * PULSE_SPEED;
         float cycle = heartbeatTimer - (int)heartbeatTimer;
 
@@ -63,7 +57,6 @@ public class Overlay {
 
         float finalAlpha = Mth.clamp(baseAlpha + pulseOffset * PULSE_STRENGTH, 0.0f, MAX_INTENSITY);
 
-        // シンプルな半透明描画
         int w = mc.getWindow().getGuiScaledWidth();
         int h = mc.getWindow().getGuiScaledHeight();
         GuiGraphics gg = event.getGuiGraphics();
@@ -76,8 +69,5 @@ public class Overlay {
 
         gg.setColor(1.0f, 1.0f, 1.0f, 1.0f);
         RenderSystem.disableBlend();
-
-        // キャンセルしない（← これが重要です！削除またはコメントアウト）
-        // event.setCanceled(true); ← ここは絶対に実行しない
     }
 }
