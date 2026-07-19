@@ -1,0 +1,23 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.survivalstaminamod.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "refmap": "survivalstaminamod.refmap.json",
+  "mixins": [
+    "AABBExpansionMixin"
+  ],
+  "client": [
+    "FovEffectMixin",
+    "TestCrawlRenderOffsetMixin",
+    "EntityMixin",
+    "TestCrawlPoseMixin",
+    "TestCrawlPlayerModelMixin",
+    "TestCrawlSprintCancelMixin",
+    "StaminaSpeedDebuff",
+    "JumpKeyBlockMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
